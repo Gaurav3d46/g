@@ -88,10 +88,10 @@ msg = 'Mail from task'
 def send_email():
     msg = EmailMessage()
     msg['Subject'] = 'Alert'
-    msg['From'] = 'justwriteandgo@gmail.com'
-    msg['To'] = 'justwriteandgo@gmail.com'
+    msg['From'] ='xyz@gmail.com'
+    msg['To'] = 'xyz@gmail.com'
     msg.set_content('Hello u loggined')
-    my_server.login('justwriteandgo@gmail.com', 'xihvjmfomeiiukgk')
+    my_server.login('xyz@gmail.com', 'Password')
     my_server.send_message(msg)
 
 
@@ -100,22 +100,37 @@ def send_whatsapp():
     now = datetime.now()
     current_hour = now.strftime("%H")
     current_min=now.strftime("%M")
-    pywhatkit.sendwhatmsg('+917081029296','Hii:-)',int(current_hour),int(current_min)+1,5)
+    pywhatkit.sendwhatmsg('+91xxxxxxxxxx','Hii:-)',int(current_hour),int(current_min)+1,5)
 
 def create_ec2():
 
-    ec2 = json.loads(subprocess.getoutput('aws ec2 run-instances --image-id ami-0ad704c126371a549 --instance-type t2.micro --subnet-id subnet-7a2a2312'))
-
-    ec2_id  = ec2['Instances'][0]['InstanceId']
-
-    ebs = json.loads(subprocess.getoutput('aws ec2 create-volume --availability-zone ap-south-1a --size 2'))
-    ebs_id = ebs['VolumeId']
-
-    time.sleep(30)
-
-    _ = subprocess.getoutput(f'aws ec2 attach-volume --device /dev/sdh --instance-id {ec2_id} --volume-id {ebs_id}')
-
-
+    import boto3
+    client = boto3.client('ec2')
+    Key_Pair = client.create_key_pair(
+        KeyName='___',
+    )
+    instance = client.run_instances(
+        ImageId='_______',
+        InstanceType='t2.micro',
+        KeyName='___',
+        MaxCount=1,
+        MinCount=1,
+        SecurityGroupIds=[
+            '_____',
+        ],
+        SecurityGroups=[
+            '_____',
+        ],
+    )
+    EBS_Volume = client.create_volume(
+        AvailabilityZone='_____',
+        Size=5,
+    )
+    Attach_Volume = client.attach_volume(
+        Device='_____',
+        InstanceId='____',
+        VolumeId='____',
+    )
 
 def face_detector(img, size=0.5):
     face_classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -152,8 +167,8 @@ while True:
         print('email sended')
         send_whatsapp()
         print('whats message sent')
-        #create_ec2()
-        print('will create ec2 create and attached')
+        create_ec2()
+        print('created ec2 create and attached')
         break
 
     if cv2.waitKey(1) == 13:  # 13 is the Enter Key
